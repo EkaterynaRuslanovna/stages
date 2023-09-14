@@ -1,47 +1,15 @@
 pipeline {
-    agent 'any'
-    parameters {
-        string(name: "dev_branch", defaultValue: "main", description: "which branch to use")
-        booleanParam(name: "run_tests", description: "Run test stage from dev_branch repo", defaultValue: false)
-        choice(name: "test_target", choices:["all", 1, 2, "site1", "site2", "locals"],  description: "Run test stage for test targets [all, site1, site2, locals]")
-        }
-    stages {
-        stage('Build Stage') {
-            steps {
-                sh "echo ${params.dev_branch}"
-                println("Show dev_branch")
-                sh 'env | grep dev_branch'
-                println("Run stage with parameter: ${params.dev_branch}")
-            }
-        }
-        stage('Test Stage') {
-            when {
-                beforeAgent true
-                expression { params.run_tests == true }
-                }
-            steps {
-                println("Tests target ${params.test_target}")
-                sh 'python3 --version'
-                sh "pwd && ls -la"
-            }
-        }
-    }
-}
-
-
-pipeline {
     agent any
 
     stages {
-        stage('Prepare ENV: git + venv') {
+        stage('Prepare VENV') {
             steps {
-                git branch: 'main', url: 'https://github.com/your_repo.git'
                 sh '''python3 -m venv venv
                       . venv/bin/activate
                       pip install -r requirements.txt
                 '''
             }
-
+            
         }
         stage('Run simple api test') {
             steps {
@@ -51,7 +19,7 @@ pipeline {
                       pytest tests/test_simple_api.py
                 '''
             }
-
+            
         }
         stage('Run simple db test') {
             steps {
@@ -59,7 +27,7 @@ pipeline {
                       pytest tests/test_user_db.py
                 '''
             }
-
+            
         }
         stage('Run simple ui test') {
             steps {
@@ -67,12 +35,12 @@ pipeline {
                       pytest tests/test_simple_ui.py
                 '''
             }
-
+            
         }
-
+        
     }
-    post {
-        always {
+    post { 
+        always { 
             cleanWs()
         }
     }
