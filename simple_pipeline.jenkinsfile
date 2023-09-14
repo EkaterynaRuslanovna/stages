@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Run simple api test') {
             steps {
-                sh '''pip list -v
+                sh '''pip3 list -v
                       . venv/bin/activate
                       pip list -v
                       pytest tests/test_simple_api.py
