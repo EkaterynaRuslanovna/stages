@@ -1,0 +1,25 @@
+pipeline {
+    agent 'any'
+    parameters {
+        booleanParam(name: "UI_TESTS", description: "True to skip this test ui", defaultValue: false)
+        booleanParam(name: "API_TESTS", description: "True to skip this test api", defaultValue: false)
+        booleanParam(name: "DB_TESTS", description: "True to skip this test db", defaultValue: false)
+        }
+    stages {
+        stage('Test UI') {
+            steps {
+                sh 'pytest tests/test_ui.py'
+            }
+        }
+        stage('Test API') {
+            steps {
+                sh 'pytest tests/test_api.py'
+            }
+        }
+        stage('Test DB') {
+            steps {
+                sh 'pytest tests/test_db.py'
+            }
+        }
+    }
+}
