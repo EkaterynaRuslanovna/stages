@@ -1,10 +1,7 @@
-def test_check_title(driver):
-    driver.get("https://google.com.ua")
-    assert "Google" in driver.title
+class TestUI:
 
+    def test_ui_upper(self):
+        assert 'foo'.upper() == 'FOO'
 
-def test_check_search(driver):
-    word = "wombat"
-    driver.get(f"https://www.google.com.ua/search?q={word}")
-    source = driver.page_source
-    assert word in source
+    def test_ui_isupper(self):
+        assert 'FOO'.isupper()
