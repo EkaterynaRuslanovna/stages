@@ -1,24 +1,28 @@
 pipeline {
     agent 'any'
     parameters {
-        booleanParam(name: "UI_TESTS", description: "True to skip this test ui", defaultValue: false)
-        booleanParam(name: "API_TESTS", description: "True to skip this test api", defaultValue: false)
-        booleanParam(name: "DB_TESTS", description: "True to skip this test db", defaultValue: false)
+        string(name: "dev_branch", defaultValue: "main", description: "which branch to use")
+        booleanParam(name: "run_tests", description: "Run test stage from dev_branch repo", defaultValue: false)
+        choice(name: "test_target", choices:["all", 1, 2, "site1", "site2", "locals"],  description: "Run test stage for test targets [all, site1, site2, locals]")
         }
     stages {
-        stage('Test UI') {
+        stage('Build Stage') {
             steps {
-                sh 'pytest tests/test_ui.py'
+                sh "echo ${params.dev_branch}"
+                println("Show dev_branch")
+                sh 'env | grep dev_branch'
+                println("Run stage with parameter: ${params.dev_branch}")
             }
         }
-        stage('Test API') {
+        stage('Test Stage') {
+            when {
+                beforeAgent true
+                expression { params.run_tests == true }
+                }
             steps {
-                sh 'pytest tests/test_api.py'
-            }
-        }
-        stage('Test DB') {
-            steps {
-                sh 'pytest tests/test_db.py'
+                println("Tests target ${params.test_target}")
+                sh 'python3 --version'
+                sh "pwd && ls -la"
             }
         }
     }
