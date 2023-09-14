@@ -1,25 +1,48 @@
 pipeline {
-    agent 'any'
-    parameters {
-        booleanParam(name: "UI_TESTS", description: "True to skip this test ui", defaultValue: false)
-        booleanParam(name: "API_TESTS", description: "True to skip this test api", defaultValue: false)
-        booleanParam(name: "DB_TESTS", description: "True to skip this test db", defaultValue: false)
-        }
+    agent any
+
     stages {
-        stage('Test UI') {
+        stage('Prepare ENV: git + venv') {
             steps {
-                sh 'pytest tests/test_ui.py'
+                git branch: 'main', url: 'https://github.com/your_repo.git'
+                sh '''python3 -m venv venv
+                      . venv/bin/activate
+                      pip install -r requirements.txt
+                '''
             }
+
         }
-        stage('Test API') {
+        stage('Run simple api test') {
             steps {
-                sh 'pytest tests/test_api.py'
+                sh '''pip list -v
+                      . venv/bin/activate
+                      pip list -v
+                      pytest tests/test_simple_api.py
+                '''
             }
+
         }
-        stage('Test DB') {
+        stage('Run simple db test') {
             steps {
-                sh 'pytest tests/test_db.py'
+                sh '''. venv/bin/activate
+                      pytest tests/test_user_db.py
+                '''
             }
+
+        }
+        stage('Run simple ui test') {
+            steps {
+                sh '''. venv/bin/activate
+                      pytest tests/test_simple_ui.py
+                '''
+            }
+
+        }
+
+    }
+    post {
+        always {
+            cleanWs()
         }
     }
 }
