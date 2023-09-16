@@ -1,4 +1,4 @@
-from locust import HttpUser, SequentialTaskSet, constant_pacing, task
+from Locust import HttpUser, SequentialTaskSet, constant_pacing, task
 from random import randint
 
 
